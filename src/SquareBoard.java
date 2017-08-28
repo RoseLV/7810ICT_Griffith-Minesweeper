@@ -9,7 +9,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class Board extends JPanel {
+public class SquareBoard extends JPanel {
 
     // define the constants will be used in the game.
     private final int NUM_IMAGES = 13;
@@ -27,9 +27,9 @@ public class Board extends JPanel {
     private final int DRAW_MARK = 11;
     private final int DRAW_WRONG_MARK = 12;
 
-    private final int N_MINES = 10;
-    private final int N_ROWS = 16;
-    private final int N_COLS = 16;
+    private int N_MINES = 10;
+    private int N_ROWS = 16;
+    private int N_COLS = 16;
 
     private int[] field;
     private boolean inGame;
@@ -39,15 +39,17 @@ public class Board extends JPanel {
     private int all_cells;
     private JLabel statusbar;
     private JLabel timeBar;
+
+
     // Board constructor
-    public Board(JLabel statusbar, JLabel timeBar) {
+    public SquareBoard(JLabel statusbar, JLabel timeBar) {
 
         this.statusbar = statusbar;
         this.timeBar = timeBar;
 
         img = new Image[NUM_IMAGES];
         for (int i = 0; i < NUM_IMAGES; i++) { // 12 pictures in total
-            img[i] = (new ImageIcon(this.getClass().getResource(i + ".png"))).getImage();
+            img[i] = (new ImageIcon(this.getClass().getResource("s" + i + ".png"))).getImage();
         }
 
         setDoubleBuffered(true);
@@ -56,14 +58,22 @@ public class Board extends JPanel {
         newGame();
     }
 
-    private void newGame() {
+    public void newGame(int mines, int rows, int cols) {
+        N_MINES = mines;
+        N_ROWS = rows;
+        N_COLS = cols;
+        all_cells = N_ROWS * N_COLS;
+        newGame();
+    }
+
+    protected void newGame() {
 
         timeBar.setText("0");
         int current_col;
 
-        int i = 0;
-        int position = 0;
-        int cell = 0;
+        int i;
+        int position;
+        int cell;
 
         Random random = new Random();
         inGame = true;
@@ -212,7 +222,7 @@ public class Board extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
 
-        int cell = 0;
+        int cell;
         int uncover = 0;
 
         for (int i = 0; i < N_ROWS; i++) {
@@ -325,3 +335,4 @@ public class Board extends JPanel {
         }
     }
 }
+

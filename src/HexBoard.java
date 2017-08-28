@@ -9,7 +9,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class Board1 extends JPanel {
+public class HexBoard extends JPanel {
     public static int CELL_SIZE;
 
     /**
@@ -58,7 +58,7 @@ public class Board1 extends JPanel {
     private JLabel statusbar;
     private JLabel timeBar;
 
-    public Board1(int n_mines, int n_rows, int n_cols, JLabel statusbar, JLabel timeBar) {
+    public HexBoard(int n_mines, int n_rows, int n_cols, JLabel statusbar, JLabel timeBar) {
         this.N_MINES = n_mines;
         this.N_ROWS = n_rows;
         this.N_COLS = n_cols;
@@ -67,14 +67,15 @@ public class Board1 extends JPanel {
         init();
     }
 
+
     // Board1's constructor
-    private void init() {
-/**
- * Load images into the array ima. The images are named 0.png, 1.png ... 12.png.
- */
+    protected void init() {
+        /**
+         * Load images into the array ima. The images are named h0.png, h1.png ... h12.png.
+         */
         img = new Image[NUM_IMAGES];  // NUM_IMAGES== 13
         for (int i = 0; i < NUM_IMAGES; i++) { // 12 pictures in total
-            img[i] = (new ImageIcon(this.getClass().getResource(i + ".png"))).getImage();
+            img[i] = (new ImageIcon(this.getClass().getResource( "h" + i + ".png"))).getImage();
         }
 
         setDoubleBuffered(true);
@@ -85,6 +86,8 @@ public class Board1 extends JPanel {
         newGame();
     }
 
+
+    // inner class
     private static class neighbor {
         public enum position {
             TOP_LEFT,
@@ -116,6 +119,8 @@ public class Board1 extends JPanel {
             return this.location;
         }
     }
+
+
 
     public neighbor[] getNeighbors(int index) {
         // 2d [i][j] to 1d [k] = i * N_COLS + j
@@ -166,7 +171,12 @@ public class Board1 extends JPanel {
     }
 
 
-    private void newGame() {
+    public boolean getInGame() {
+        return inGame;
+    }
+
+
+    public void newGame() {
 
         timeBar.setText("0");
         int current_col;
@@ -193,7 +203,7 @@ public class Board1 extends JPanel {
         /**
          * random generate mines
          * */
-        while (i < N_MINES*2) {    // 当i< N_MINES: 10的时候  // all_cells: 196
+        while (i < N_MINES) {    // 当i< N_MINES: 10的时候  // all_cells: 196
             position = (int) (all_cells * random.nextDouble()); /*distributed double value between 0.0 and 1.0*/
 
             if ((position < all_cells) && (field[position] != COVERED_MINE_CELL)) {
@@ -235,8 +245,10 @@ public class Board1 extends JPanel {
         }
     }
 
+
+
     @Override
-    public void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g) {
 
         int cell;
         int uncover = 0;
@@ -285,6 +297,7 @@ public class Board1 extends JPanel {
         } else if (!inGame)
             statusbar.setText("Game lost");
     }
+
 
 
     class MinesAdapter extends MouseAdapter {
