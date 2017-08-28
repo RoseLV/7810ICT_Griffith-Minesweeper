@@ -7,121 +7,29 @@ import java.util.Random;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
-public class HexBoard extends JPanel {
-    public static int CELL_SIZE;
-
-    /**
-     * There are 13 images used in this game.
-     * A cell can be surrounded by maximum of 8 mines,
-     * so we need numbers 1..8.
-     * We need images for an empty cell, a mine, a covered cell, a marked cell and finally for a wrongly marked cell.
-     * The size of each of the images is 15x15px.
-     */
-    private final int NUM_IMAGES = 13;
-    /**
-     * A mine field is an array of numbers.
-     * For example 0 denotes an empty cell.
-     * Number 10 is used for a cell cover as well as for a mark.
-     * Using constants improves readability of the code.
-     */
-    private final int COVER_FOR_CELL = 10;
-    private final int MARK_FOR_CELL = 10;
-    private final int EMPTY_CELL = 0;
-    private final int MINE_CELL = 9;
-    private final int COVERED_MINE_CELL = MINE_CELL + COVER_FOR_CELL;
-    private final int MARKED_MINE_CELL = COVERED_MINE_CELL + MARK_FOR_CELL;
-
-    private final int DRAW_MINE = 9;
-    private final int DRAW_COVER = 10;
-    private final int DRAW_MARK = 11;
-    private final int DRAW_WRONG_MARK = 12;
-    /**The minefield in our game has 10 hidden mines.
-     * There are 16 rows and 16 columns in this field.
-     * So there are 256 cells together in the minefield.
-     */
-    private final int N_MINES;
-    private final int N_ROWS;
-    private final int N_COLS;
-    /**
-     * The field is an array of numbers. Each cell in the field has a specific number.
-     * E.g. a mine cell has number 9, while a cell with number 2, meaning it is adjacent to two mines.
-     * The numbers are added, line33, 34. For example, a covered mine has number 19, 9 for the mine and 10 for the cell cover etc.
-     */
-    private int[] field;  // one dimension array
-    private boolean inGame;
-    private int mines_left;
-    private Image[] img;
-
-    private int all_cells;
-    private JLabel statusbar;
-    private JLabel timeBar;
+public class HexBoard extends Board {
 
     public HexBoard(int n_mines, int n_rows, int n_cols, JLabel statusbar, JLabel timeBar) {
+        super(statusbar, timeBar);
         this.N_MINES = n_mines;
         this.N_ROWS = n_rows;
         this.N_COLS = n_cols;
-        this.statusbar = statusbar;
-        this.timeBar = timeBar;
-        init();
     }
 
-
-    // Board1's constructor
-    protected void init() {
+    @Override
+    public Image[] loadImages() {
         /**
          * Load images into the array ima. The images are named h0.png, h1.png ... h12.png.
          */
-        img = new Image[NUM_IMAGES];  // NUM_IMAGES== 13
+        Image[] images = new Image[NUM_IMAGES];
         for (int i = 0; i < NUM_IMAGES; i++) { // 12 pictures in total
-            img[i] = (new ImageIcon(this.getClass().getResource( "h" + i + ".png"))).getImage();
+            images[i] = (new ImageIcon(this.getClass().getResource("h" + i + ".png"))).getImage();
         }
-
-        setDoubleBuffered(true);
-        addMouseListener(new MinesAdapter());
-        /**
-         * newGame() initiates the Minesweeper game.
-         */
-        newGame();
+        return images;
     }
 
-
-    // inner class
-    private static class neighbor {
-        public enum position {
-            TOP_LEFT,
-            TOP_RIGHT,
-            LEFT,
-            RIGHT,
-            BOTTOM_LEFT,
-            BOTTOM_RIGHT,
-            OUT_OF_BOUNDS
-        }
-        public static final position[] positions = position.values();
-
-        private final int index;
-        private final position location;
-
-        // constructor
-        public neighbor (int index, position location) {
-            this.index = index;
-            this.location = location;
-            // information we need
-            // this.<> resolves naming conflict
-        }
-
-        public int getIndex() {
-            return this.index;
-        }
-
-        public position getLocation() {
-            return this.location;
-        }
-    }
-
-
-
+    @Override
     public neighbor[] getNeighbors(int index) {
         // 2d [i][j] to 1d [k] = i * N_COLS + j
         // 1d[k] to 2d[i][j]
@@ -141,7 +49,7 @@ public class HexBoard extends JPanel {
             int newRow = row + nbr_row;
             int newCol = col + nbr_col;
             if (newRow > -1 && newRow < N_ROWS && newCol > -1 && newCol < N_COLS) {
-                neighbors[i] = new neighbor(newRow * N_COLS + newCol, neighbor.positions[i]);
+                neighbors[i] = new neighbor(newRow * N_COLS + newCol, neighbor.position.IN_BOUNDS);
             } else {
                 neighbors[i] = new neighbor(-1, neighbor.position.OUT_OF_BOUNDS);
             }
@@ -171,84 +79,10 @@ public class HexBoard extends JPanel {
     }
 
 
-    public boolean getInGame() {
-        return inGame;
-    }
-
-
-    public void newGame() {
-
-        timeBar.setText("0");
-        int current_col;
-        int current_row;
-        int i;
-        int position;
-        int cell;
-        Random random = new Random();
-        inGame = true;
-        mines_left = N_MINES;
-        /**
-         * These lines set up the mine field. Every cell is covered by default.
-         */
-        all_cells = N_ROWS * N_COLS; // 16 * 16
-        field = new int[all_cells];
-
-        for (i = 0; i < all_cells; i++)
-            field[i] = COVER_FOR_CELL; // field[i] all == 10 initially
-        /** Set the number of line left ob the bottom status bar.*/
-        statusbar.setText(Integer.toString(mines_left));
-
-        /** In the while cycle we randomly position all mines in the field. */
-        i = 0;
-        /**
-         * random generate mines
-         * */
-        while (i < N_MINES) {    // 当i< N_MINES: 10的时候  // all_cells: 196
-            position = (int) (all_cells * random.nextDouble()); /*distributed double value between 0.0 and 1.0*/
-
-            if ((position < all_cells) && (field[position] != COVERED_MINE_CELL)) {
-                field[position] = COVERED_MINE_CELL;
-                i++;
-
-                neighbor[] neighbors = getNeighbors(position);
-                for (neighbor n : neighbors) {
-                    cell = n.getIndex();
-                    if (n.location == neighbor.position.OUT_OF_BOUNDS ||
-                        field[cell] == COVERED_MINE_CELL) {
-                        continue;
-                    }
-
-                    field[cell]++;
-                }
-            }
-        }
-    }
-
-
-
-    public void find_empty_cells(int position) {
-        neighbor[] neighbors = getNeighbors(position);
-        for (neighbor n : neighbors) {
-            if (n.location == neighbor.position.OUT_OF_BOUNDS) {
-                continue;
-            }
-
-            int cell = n.getIndex();
-            // if nerghbor is mine or already been uncovered, do nothing.
-            if (field[cell] == COVERED_MINE_CELL || field[cell] <= MINE_CELL) {
-                continue;
-            }
-            // uncover
-            field[cell] -= COVER_FOR_CELL;
-            if (field[cell] == EMPTY_CELL)
-                find_empty_cells(cell);
-        }
-    }
-
 
 
     @Override
-    protected void paintComponent(Graphics g) {
+    public void paintComponent(Graphics g) {
 
         int cell;
         int uncover = 0;

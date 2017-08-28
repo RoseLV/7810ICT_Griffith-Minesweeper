@@ -7,14 +7,17 @@ import javax.swing.Timer;
 public class Mines extends JFrame implements ActionListener{
 
     private final int CELL_SIZE = 13;
+    private int N_MINES = 5;
+    private int N_COLS = 16;
+    private int N_ROWS = 16;
 
     private int FRAME_WIDTH; //250;
     private int FRAME_HEIGHT; //307;
 
-    private final HexBoard hex_game;
-    private final SquareBoard cube_game;
     private final JLabel statusbar;
     private final JLabel timeBar;
+
+    private Board game;
     private Timer timer;
 
     private final JMenuItem squareCell, hexCell;
@@ -22,10 +25,6 @@ public class Mines extends JFrame implements ActionListener{
 
     // constructor
     public Mines() {
-        int N_MINES = 5;
-        int N_COLS = 16;
-        int N_ROWS = 16;
-        //int time = 0;
 
         FRAME_HEIGHT = N_ROWS * CELL_SIZE + 66 ;
         FRAME_WIDTH = N_COLS * CELL_SIZE + 6;
@@ -49,12 +48,10 @@ public class Mines extends JFrame implements ActionListener{
         // ?? can use board like this?: with two parameters without predefine?
 
 
-        HexBoard.CELL_SIZE = CELL_SIZE;
-        //SquareBoard.CELL_SIZE = CELL_SIZE;
-        hex_game = new HexBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
-        cube_game = new SquareBoard(statusbar, timeBar);
-        add(hex_game);
-        add(cube_game);
+        Board.CELL_SIZE = CELL_SIZE;
+   //     game = new HexBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
+        game = new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
+        add(game);
 
         timer = new Timer(1000, this);
         timer.start();
@@ -83,7 +80,7 @@ public class Mines extends JFrame implements ActionListener{
             String time=timeBar.getText().trim();
             int t=Integer.parseInt(time);
             //System.out.println(t);
-            if(hex_game.getInGame()==false){
+            if(!game.inGame()){
                 timer.stop();
             }
             else{
@@ -93,12 +90,14 @@ public class Mines extends JFrame implements ActionListener{
         }
 
         if (e.getSource() == hexCell){
-            hex_game.init();
-
+            game = new HexBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
+            game.newGame();
         }
 
+
         if (e.getSource() == squareCell) {
-            cube_game.newGame(10, 16, 16);
+            game = new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
+            game.newGame();
         }
 
     }
