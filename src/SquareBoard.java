@@ -10,7 +10,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class SquareBoard extends Board {
+    // constructor
     public SquareBoard(int n_mines, int n_rows, int n_cols, JLabel statusbar, JLabel timeBar) {
+        //
         super(statusbar, timeBar);
         this.N_MINES = n_mines;
         this.N_ROWS = n_rows;

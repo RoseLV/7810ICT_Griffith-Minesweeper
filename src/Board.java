@@ -71,7 +71,7 @@ public abstract class Board extends JPanel {
      * We need images for an empty cell, a mine, a covered cell, a marked cell and finally for a wrongly marked cell.
      * The size of each of the images is 15x15px.
      */
-    protected final int NUM_IMAGES = 13;
+    protected int NUM_IMAGES = 13;
 
     /**
      * A mine field is an array of numbers.
@@ -98,6 +98,8 @@ public abstract class Board extends JPanel {
     protected int N_MINES = 10;
     protected int N_ROWS = 16;
     protected int N_COLS = 16;
+
+
 
     /**
      * The field is an array of numbers. Each cell in the field has a specific number.

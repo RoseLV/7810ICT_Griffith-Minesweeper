@@ -46,9 +46,11 @@ public class Mines extends JFrame implements ActionListener{
         add(bottomBar, BorderLayout.SOUTH);
 
         Board.CELL_SIZE = CELL_SIZE;
+
+        //TODO: solve only one of the three options can be choose.
         //game = new HexBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
-        game = new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
         //game = new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
+        game = new ColorBoard(N_ROWS, N_COLS, statusbar, timeBar);
         add(game);
 
         timer = new Timer(1000, this);
