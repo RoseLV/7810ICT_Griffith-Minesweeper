@@ -9,9 +9,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-/**
- * Created by ranlyu on 28/8/17.
- */
 
 /*
 
@@ -40,8 +37,6 @@ public class SquareBoard extends Board {
         // if private
         int mycopy = super.intvar; // can't do
         super.intvar = xx (write)
-
-
     }
 }
 
@@ -63,13 +58,10 @@ public class Main {
     board.intvar = 14; // ok
 }
 }
-
-
  */
 public abstract class Board extends JPanel {
 
     public static int CELL_SIZE;
-
 
     // define the constants will be used in the game.
     /**
@@ -139,6 +131,10 @@ public abstract class Board extends JPanel {
 
     public abstract neighbor[] getNeighbors(int index);
 
+    public boolean inGame() {
+        return inGame;
+    }
+
     public void newGame() {
 
         timeBar.setText("0");
@@ -186,10 +182,6 @@ public abstract class Board extends JPanel {
         }
     }
 
-    public boolean inGame() {
-        return inGame;
-    }
-
     public void find_empty_cells(int position) {
         neighbor[] neighbors = getNeighbors(position);
         for (neighbor n : neighbors) {
@@ -208,7 +200,6 @@ public abstract class Board extends JPanel {
                 find_empty_cells(cell);
         }
     }
-
 
     class MinesAdapter extends MouseAdapter {
 
@@ -302,8 +293,6 @@ public abstract class Board extends JPanel {
                     } else if (cell > MINE_CELL) {
                         cell = DRAW_COVER;
                     }
-
-
                 } else {
                     if (cell > COVERED_MINE_CELL)
                         cell = DRAW_MARK;
@@ -321,8 +310,10 @@ public abstract class Board extends JPanel {
         if (uncover == 0 && inGame) {
             inGame = false;
             statusbar.setText("Game won");
-        } else if (!inGame)
+        }
+        else if (!inGame)
             statusbar.setText("Game lost");
+
     }
 
 

@@ -2,7 +2,6 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.util.Random;
 
 import javax.swing.ImageIcon;
@@ -74,12 +73,8 @@ public class HexBoard extends Board {
 
             nbr_col++;
         }
-
         return neighbors;
     }
-
-
-
 
     @Override
     public void paintComponent(Graphics g) {
@@ -132,10 +127,7 @@ public class HexBoard extends Board {
             statusbar.setText("Game lost");
     }
 
-
-
     class MinesAdapter extends MouseAdapter {
-
         @Override
         public void mousePressed(MouseEvent e) {
 

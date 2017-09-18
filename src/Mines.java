@@ -13,14 +13,13 @@ public class Mines extends JFrame implements ActionListener{
 
     private int FRAME_WIDTH; //250;
     private int FRAME_HEIGHT; //307;
-
     private final JLabel statusbar;
     private final JLabel timeBar;
 
     private Board game;
     private Timer timer;
 
-    private final JMenuItem squareCell, hexCell;
+    private final JMenuItem squareCell, hexCell, colorCell;
     //private Timer timer;
 
     // constructor
@@ -45,12 +44,11 @@ public class Mines extends JFrame implements ActionListener{
         bottomBar.add(timeBar);
         bottomBar.setMaximumSize(new Dimension(FRAME_WIDTH, 6));
         add(bottomBar, BorderLayout.SOUTH);
-        // ?? can use board like this?: with two parameters without predefine?
-
 
         Board.CELL_SIZE = CELL_SIZE;
-   //     game = new HexBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
+        //game = new HexBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
         game = new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
+        //game = new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
         add(game);
 
         timer = new Timer(1000, this);
@@ -68,28 +66,31 @@ public class Mines extends JFrame implements ActionListener{
         hexCell.addActionListener(this);
         option.add(hexCell);
 
+        colorCell = new JMenuItem("ColorCell");
+        colorCell.addActionListener(this);
+        option.add(colorCell);
+
         menuBar.add(option);
         setJMenuBar(menuBar);
     }
 
+
+
     public void actionPerformed(ActionEvent e) {
 
-
-        if(e.getSource() == timer)
-        {
-            String time=timeBar.getText().trim();
-            int t=Integer.parseInt(time);
+        if (e.getSource() == timer) {
+            String time = timeBar.getText().trim();
+            int t = Integer.parseInt(time);
             //System.out.println(t);
-            if(!game.inGame()){
+            if (!game.inGame()) {
                 timer.stop();
-            }
-            else{
+            } else {
                 t++;
-                timeBar.setText(t+"");
+                timeBar.setText(t + "");
             }
         }
 
-        if (e.getSource() == hexCell){
+        if (e.getSource() == hexCell) {
             game = new HexBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
             game.newGame();
         }
@@ -98,6 +99,13 @@ public class Mines extends JFrame implements ActionListener{
         if (e.getSource() == squareCell) {
             game = new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
             game.newGame();
+        }
+
+
+        if (e.getSource() == colorCell) {
+            // game = new ColorBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
+            // game.newGame();
+            System.out.println("color game");
         }
 
     }

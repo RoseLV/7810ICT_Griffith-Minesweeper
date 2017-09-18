@@ -1,0 +1,43 @@
+commit 2543f0e536b2ae6e4d2625642512e15be533f2e5
+Author: RoseLV <lvran19930315@gmail.com>
+Date:   Mon Aug 28 21:32:00 2017 +1000
+
+    add parent class
+
+commit a29a6b123fec2821ad73a4e887e62e6776f0c775
+Author: RoseLV <lvran19930315@gmail.com>
+Date:   Mon Aug 28 19:17:26 2017 +1000
+
+    need refactor
+
+commit aa7a50e556cc63c0c34a59b70e559b5a03e1c20f
+Author: RoseLV <lvran19930315@gmail.com>
+Date:   Mon Aug 28 15:52:19 2017 +1000
+
+    add file1
+
+commit 3e7ffcc9134d31943480b427819e97d555f91791
+Author: RoseLV <lvran19930315@gmail.com>
+Date:   Mon Aug 28 15:45:12 2017 +1000
+
+    test
+
+commit 1578b21dee57e324df098365c68c9fd6e8370247
+Author: RoseLV <lvran19930315@gmail.com>
+Date:   Sun Aug 27 23:05:38 2017 +1000
+
+    initial commit
+
+commit fbf62ee1427a91c99de37b00f7a8ca31aa678adb
+Author: RoseLV <lvran19930315@gmail.com>
+Date:   Thu Jul 27 22:17:54 2017 +1000
+
+    Add files via upload
+    
+    src folder all files prototype
+
+commit 7cca897498dc8c1e7cf9daf56c0580073c096cef
+Author: RoseLV <lvran19930315@gmail.com>
+Date:   Thu Jul 27 22:14:18 2017 +1000
+
+    Initial commit
