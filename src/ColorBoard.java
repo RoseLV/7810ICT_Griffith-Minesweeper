@@ -62,31 +62,31 @@ public class ColorBoard extends Board {
             }
         }
 
-    // int pairs ok to put here (before define function)?
-    int N_MINES = 0;
-    //public int calculateMines(int field[][]){
+        // int pairs ok to put here (before define function)?
+        int N_MINES = 0;
+        //public int calculateMines(int field[][]){
 
-    //TODO: find NUMBER of pairs with same color(value) cell right, bottom.
-    for (int i = 0;i<N_ROWS-1;i++) {
-        for (int j = 0; j < N_COLS - 1; j++) {
-            // Can I make this shorter？只找右边和下边；
-            int idx = i * N_COLS + j;
-            int bottom = (i + 1) * N_COLS + j;
-            int right = i * N_COLS + j + 1;
-            if (field[idx] == field[bottom] || field[idx] == field[right]) {
-                N_MINES += 1;
+        //TODO: find NUMBER of pairs with same color(value) cell right, bottom.
+        for (int i = 0;i<N_ROWS-1;i++) {
+            for (int j = 0; j < N_COLS - 1; j++) {
+                // Can I make this shorter？只找右边和下边；
+                int idx = i * N_COLS + j;
+                int bottom = (i + 1) * N_COLS + j;
+                int right = i * N_COLS + j + 1;
+                if (field[idx] == field[bottom] || field[idx] == field[right]) {
+                    N_MINES += 1;
+                }
             }
         }
+        //return N_MINES;   // pairs = mines, show left bottom corner.
+        //}
+
+        mines_left = N_MINES;
+
+        inGame = true;
+        statusbar.setText(Integer.toString(N_MINES));
+        timeBar.setText("0");
     }
-    //return N_MINES;   // pairs = mines, show left bottom corner.
-    //}
-
-    mines_left = N_MINES;
-
-    inGame = true;
-    statusbar.setText(Integer.toString(N_MINES));
-    timeBar.setText("0");
-}
 
 
 
@@ -105,15 +105,8 @@ public class ColorBoard extends Board {
     rightClick: set flag;
     */
 
-
-    @Override
-    public void paintComponent(Graphics g) {
-
         // TODO: 改写一下game won, game over, 图片变化；
         // TODO: 怎么找雷 让uncover-- 是个问题？
-
-
-    }
 
 
     @Override

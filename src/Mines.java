@@ -6,6 +6,7 @@ import javax.swing.Timer;
 
 public class Mines extends JFrame implements ActionListener{
 
+    // WHY some variable have the value at the beginning, some are not?
     private final int CELL_SIZE = 13;
     private int N_MINES = 5;
     private int N_COLS = 16;
@@ -25,7 +26,7 @@ public class Mines extends JFrame implements ActionListener{
     // constructor
     public Mines() {
 
-        FRAME_HEIGHT = N_ROWS * CELL_SIZE + 66 ;
+        FRAME_HEIGHT = N_ROWS * CELL_SIZE + 66;
         FRAME_WIDTH = N_COLS * CELL_SIZE + 6;
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -48,14 +49,8 @@ public class Mines extends JFrame implements ActionListener{
         Board.CELL_SIZE = CELL_SIZE;
 
         //TODO: solve only one of the three options can be choose.
-        //game = new HexBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
-        //game = new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
-        //game = new ColorBoard(N_ROWS, N_COLS, statusbar, timeBar);
-        //add(game);
-        // default game type is SquareBoard
         game = new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
         getContentPane().add(game);
-
 
         timer = new Timer(1000, this);
         timer.start();
@@ -78,21 +73,13 @@ public class Mines extends JFrame implements ActionListener{
 
         menuBar.add(option);
         setJMenuBar(menuBar);
+        setJMenuBar(menuBar);
     }
 
 
     private void changeGame(Board game) {
         // here will change the game depending on user selection
         getContentPane().removeAll();
-
-        JPanel bottomBar = new JPanel();
-        bottomBar.setLayout(new BoxLayout(bottomBar, BoxLayout.X_AXIS));
-        bottomBar.add(statusbar);
-        bottomBar.add(javax.swing.Box.createHorizontalGlue());
-        bottomBar.add(timeBar);
-        bottomBar.setMaximumSize(new Dimension(FRAME_WIDTH, 6));
-        add(bottomBar, BorderLayout.SOUTH);
-
         getContentPane().add(game);
 
         // update game member variable and start new game
@@ -117,17 +104,16 @@ public class Mines extends JFrame implements ActionListener{
             }
         }
 
-
         if (e.getSource() == squareCell) {
             this.changeGame(new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar));
         }
 
         if (e.getSource() == hexCell) {
-            this.changeGame(new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar));
+            this.changeGame(new HexBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar));
         }
 
         if (e.getSource() == colorCell) {
-            //this.changeGame(new ColorBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar));
+            this.changeGame(new ColorBoard(N_ROWS, N_COLS, statusbar, timeBar));
         }
 
     }
