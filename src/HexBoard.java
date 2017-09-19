@@ -77,140 +77,22 @@ public class HexBoard extends Board {
     }
 
     @Override
-    public void paintComponent(Graphics g) {
+    public void drawImage(Graphics g, Image img, int i, int j) {
+        int extraX = i % 2 == 0 ? 6 : 0;
+        g.drawImage(img, (j * CELL_SIZE) + extraX, (i * CELL_SIZE), this);
 
-        int cell;
-        int uncover = 0;
-
-        for (int i = 0; i < N_ROWS; i++) {
-            for (int j = 0; j < N_COLS; j++) {
-
-                cell = field[(i * N_COLS) + j];
-
-                if (inGame && cell == MINE_CELL)
-                    inGame = false;
-                /**
-                 * If the game is over and all uncovered mines will be shown if any left and show all wrongly marked cells if any.
-                 */
-                if (!inGame) {
-                    if (cell == COVERED_MINE_CELL) {
-                        cell = DRAW_MINE;
-                    } else if (cell == MARKED_MINE_CELL) {
-                        cell = DRAW_MARK;
-                    } else if (cell > COVERED_MINE_CELL) {
-                        cell = DRAW_WRONG_MARK;
-                    } else if (cell > MINE_CELL) {
-                        cell = DRAW_COVER;
-                    }
-
-
-                } else {
-                    if (cell > COVERED_MINE_CELL)
-                        cell = DRAW_MARK;
-                    else if (cell > MINE_CELL) {
-                        cell = DRAW_COVER;
-                        uncover++;
-                    }
-                }
-                /** This code line draws every cell on the board. */
-                int extraX = i % 2 == 0 ? 6 : 0;
-                g.drawImage(img[cell], (j * CELL_SIZE) + extraX,
-                        (i * CELL_SIZE), this);
-                // image, x, y, this
-            }
-        }
-
-        if (uncover == 0 && inGame) {
-            inGame = false;
-            statusbar.setText("Game won");
-        } else if (!inGame)
-            statusbar.setText("Game lost");
     }
 
-    class MinesAdapter extends MouseAdapter {
-        @Override
-        public void mousePressed(MouseEvent e) {
-
-            int x = e.getX();
-            int y = e.getY();
-            // get the current cell's row number
-            int cRow = y / CELL_SIZE;   // CELL_SIZE = 20
-            // odd row stay, even row move left 10.
-            x -= cRow % 2 == 0 ? 6 : 0;
-            // get the current cell's column number
-            int cCol = x / CELL_SIZE;
-
-            boolean rep = false;
-
-            System.out.println(String.format("x=%d y=%d r=%d c=%d", x,y,cRow,cCol));
-            System.out.println(field[cRow * N_COLS + cCol]);
-
-
-            if (!inGame) {
-                newGame();
-                repaint();
-            }
-
-
-            if ((x < N_COLS * CELL_SIZE) && (y < N_ROWS * CELL_SIZE)) {
-
-                if (e.getButton() == MouseEvent.BUTTON3) {
-
-                    if (field[(cRow * N_COLS) + cCol] > MINE_CELL) {
-                        rep = true;
-
-                        if (field[(cRow * N_COLS) + cCol] <= COVERED_MINE_CELL) {
-                            if (mines_left > 0) {
-                                /**
-                                 * If we right click on an unmarked cell, we add MARK_FOR_CELL to the number representing the cell.
-                                 * This leads to drawing a covered cell with a mark in the paintComponent() method.
-                                 */
-                                field[(cRow * N_COLS) + cCol] += MARK_FOR_CELL;
-                                mines_left--;
-                                statusbar.setText(Integer.toString(mines_left));
-                            } else
-                                statusbar.setText("No marks left");
-                        } else {
-
-                            field[(cRow * N_COLS) + cCol] -= MARK_FOR_CELL;
-                            mines_left++;
-                            statusbar.setText(Integer.toString(mines_left));
-                        }
-                    }
-
-                } else {
-                    /**
-                     * Nothing happens if click on the covered & marked cell.
-                     * It must by first uncovered by another right click and only then it is possible to left click on it.
-                     */
-                    if (field[(cRow * N_COLS) + cCol] > COVERED_MINE_CELL) {
-                        return;
-                    }
-
-                    if ((field[(cRow * N_COLS) + cCol] > MINE_CELL) &&
-                            (field[(cRow * N_COLS) + cCol] < MARKED_MINE_CELL)) {
-                        /**
-                         * A left click removes a cover from the cell.
-                         */
-                        field[(cRow * N_COLS) + cCol] -= COVER_FOR_CELL;
-                        rep = true;
-                        /**
-                         * In case we left clicked on a mine, the game is over.
-                         * If we left clicked on an empty cell,
-                         * we call the find_empty_cells() method which recursively
-                         * finds all adjacent empty cells.
-                         */
-                        if (field[(cRow * N_COLS) + cCol] == MINE_CELL)
-                            inGame = false;
-                        if (field[(cRow * N_COLS) + cCol] == EMPTY_CELL)
-                            find_empty_cells((cRow * N_COLS) + cCol);
-                    }
-                }
-
-                if (rep)
-                    repaint();
-
-            }
-        }
+    @Override
+    public int getIndexFromMouseEvent(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+        // get the current cell's row number
+        int cRow = y / CELL_SIZE;   // CELL_SIZE = 20
+        // odd row stay, even row move left 10.
+        x -= cRow % 2 == 0 ? 6 : 0;
+        // get the current cell's column number
+        int cCol = x / CELL_SIZE;
+        return cRow * N_COLS + cCol;
     }
 }

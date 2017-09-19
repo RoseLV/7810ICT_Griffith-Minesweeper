@@ -50,8 +50,12 @@ public class Mines extends JFrame implements ActionListener{
         //TODO: solve only one of the three options can be choose.
         //game = new HexBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
         //game = new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
-        game = new ColorBoard(N_ROWS, N_COLS, statusbar, timeBar);
-        add(game);
+        //game = new ColorBoard(N_ROWS, N_COLS, statusbar, timeBar);
+        //add(game);
+        // default game type is SquareBoard
+        game = new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
+        getContentPane().add(game);
+
 
         timer = new Timer(1000, this);
         timer.start();
@@ -77,6 +81,27 @@ public class Mines extends JFrame implements ActionListener{
     }
 
 
+    private void changeGame(Board game) {
+        // here will change the game depending on user selection
+        getContentPane().removeAll();
+
+        JPanel bottomBar = new JPanel();
+        bottomBar.setLayout(new BoxLayout(bottomBar, BoxLayout.X_AXIS));
+        bottomBar.add(statusbar);
+        bottomBar.add(javax.swing.Box.createHorizontalGlue());
+        bottomBar.add(timeBar);
+        bottomBar.setMaximumSize(new Dimension(FRAME_WIDTH, 6));
+        add(bottomBar, BorderLayout.SOUTH);
+
+        getContentPane().add(game);
+
+        // update game member variable and start new game
+        this.game = game;
+        game.newGame();
+
+        // this revalidate ensures display is updated correctly
+        revalidate();
+    }
 
     public void actionPerformed(ActionEvent e) {
 
@@ -92,22 +117,17 @@ public class Mines extends JFrame implements ActionListener{
             }
         }
 
-        if (e.getSource() == hexCell) {
-            game = new HexBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
-            game.newGame();
-        }
-
 
         if (e.getSource() == squareCell) {
-            game = new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
-            game.newGame();
+            this.changeGame(new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar));
         }
 
+        if (e.getSource() == hexCell) {
+            this.changeGame(new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar));
+        }
 
         if (e.getSource() == colorCell) {
-            // game = new ColorBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
-            // game.newGame();
-            System.out.println("color game");
+            //this.changeGame(new ColorBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar));
         }
 
     }

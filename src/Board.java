@@ -2,63 +2,59 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.util.Random;
-
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
 /*
+    // Board.java
+    abstract public class Board {
+        [private|protected|public] int intvar;
+        public void setIntVar(int newIntVar) {
+            intvar = newIntVar;
+        }
 
-// Board.java
-abstract public class Board {
-    [private|protected|public] int intvar;
+        public int getIntVar() {
+            return intvar;
+        }
 
-    public void setIntVar(int newIntVar) {
-        intvar = newIntVar;
+        public void blah(){
+        }
+
+        public abstract void newGame();
     }
 
-    public int getIntVar() {
-        return intvar;
+    // SquareBoard.java
+    public class SquareBoard extends Board {
+
+        public void newGame () {
+            // if private
+            int mycopy = super.intvar; // can't do
+            super.intvar = xx (write)
+        }
     }
 
-    public void blah(){
+    // Main.java
+    public class Main {
+      public static void main(String[] args){
+        Board board = new Board(); // if class declared abstract, cannot do this
+
+      // if private
+        board.intvar = 14; // not allowed because private, won't compile
+
+        board.setIntVar(14);
+        int myIntVar = board.getIntVar();
+
+      // if protected
+        board.intvar = 14; // not allowed, same reason as private
+
+      // if public
+        board.intvar = 14; // ok
     }
-
-    public abstract void newGame();
-}
-
-// SquareBoard.java
-public class SquareBoard extends Board {
-
-    public void newGame () {
-        // if private
-        int mycopy = super.intvar; // can't do
-        super.intvar = xx (write)
     }
-}
-
-// Main.java
-public class Main {
-  public static void main(String[] args){
-    Board board = new Board(); // if class declared abstract, cannot do this
-
-  // if private
-    board.intvar = 14; // not allowed because private, won't compile
-
-    board.setIntVar(14);
-    int myIntVar = board.getIntVar();
-
-  // if protected
-    board.intvar = 14; // not allowed, same reason as private
-
-  // if public
-    board.intvar = 14; // ok
-}
-}
- */
+     */
 public abstract class Board extends JPanel {
 
     public static int CELL_SIZE;
@@ -91,15 +87,14 @@ public abstract class Board extends JPanel {
     protected final int DRAW_MARK = 11;
     protected final int DRAW_WRONG_MARK = 12;
 
-    /**The minefield in our game has 10 hidden mines.
+    /**
+     * The minefield in our game has 10 hidden mines.
      * There are 16 rows and 16 columns in this field.
      * So there are 256 cells together in the minefield.
      */
     protected int N_MINES = 10;
     protected int N_ROWS = 16;
     protected int N_COLS = 16;
-
-
 
     /**
      * The field is an array of numbers. Each cell in the field has a specific number.
@@ -115,15 +110,14 @@ public abstract class Board extends JPanel {
     protected JLabel statusbar;
     protected JLabel timeBar;
 
+
     // Board constructor
     public Board(JLabel statusbar, JLabel timeBar) {
         this.statusbar = statusbar;
         this.timeBar = timeBar;
-
         this.img = this.loadImages();
 
         setDoubleBuffered(true);
-
         addMouseListener(new MinesAdapter());
         newGame();
     }
@@ -203,19 +197,42 @@ public abstract class Board extends JPanel {
         }
     }
 
+    /**
+     * This method allows for subclasses to override the
+     * cell index calculated for a mouse click should
+     * their painting not conform to a perfect grid.
+     */
+    public int getIndexFromMouseEvent(MouseEvent e) {
+        int cCol = e.getX() / CELL_SIZE;
+        int cRow = e.getY() / CELL_SIZE;
+        return cRow * N_COLS + cCol;
+    }
+
+    /**
+     * This method allows for subclasses to adjust which clicks
+     * are registered as landing on the game board
+     */
+    public boolean clickedOnBoard(MouseEvent e) {
+        return (e.getX() < N_COLS * CELL_SIZE) && (e.getY() < N_ROWS * CELL_SIZE);
+    }
+
+    /**
+     * This method allows subclasses to override the position of
+     * a particular image icon being drawn
+     * (i.e. to decide the x,y coordinate)
+     */
+    public void drawImage(Graphics g, Image img, int i, int j) {
+        g.drawImage(img, (j * CELL_SIZE), (i * CELL_SIZE), this);
+    }
+
+
     class MinesAdapter extends MouseAdapter {
 
         @Override
         public void mousePressed(MouseEvent e) {
-
-            int x = e.getX();
-            int y = e.getY();
-
-            int cCol = x / CELL_SIZE;
-            int cRow = y / CELL_SIZE;
-
             boolean rep = false;
 
+            int index = getIndexFromMouseEvent(e);
 
             if (!inGame) {
                 newGame();
@@ -223,47 +240,63 @@ public abstract class Board extends JPanel {
             }
 
 
-            if ((x < N_COLS * CELL_SIZE) && (y < N_ROWS * CELL_SIZE)) {
+            if (clickedOnBoard(e)) {
 
                 if (e.getButton() == MouseEvent.BUTTON3) {
 
-                    if (field[(cRow * N_COLS) + cCol] > MINE_CELL) {
+                    if (field[index] > MINE_CELL) {
                         rep = true;
 
-                        if (field[(cRow * N_COLS) + cCol] <= COVERED_MINE_CELL) {
+                        if (field[index] <= COVERED_MINE_CELL) {
                             if (mines_left > 0) {
-                                field[(cRow * N_COLS) + cCol] += MARK_FOR_CELL;
+                                /**
+                                 * If we right click on an unmarked cell, we add MARK_FOR_CELL to the number representing the cell.
+                                 * This leads to drawing a covered cell with a mark in the paintComponent() method.
+                                 * */
+
+                                field[index] += MARK_FOR_CELL;
                                 mines_left--;
                                 statusbar.setText(Integer.toString(mines_left));
                             } else
                                 statusbar.setText("No marks left");
                         } else {
-
-                            field[(cRow * N_COLS) + cCol] -= MARK_FOR_CELL;
+                            field[index] -= MARK_FOR_CELL;
                             mines_left++;
                             statusbar.setText(Integer.toString(mines_left));
                         }
                     }
 
-                } else {
+                    } else {
 
-                    if (field[(cRow * N_COLS) + cCol] > COVERED_MINE_CELL) {
-                        return;
+                        /**
+                         * Nothing happens if click on the covered & marked cell.
+                         * It must by first uncovered by another right click and only then it is possible to left click on it.
+                         */
+                        if (field[index] > COVERED_MINE_CELL) {
+                            return;
+                        }
+
+                        if ((field[index] > MINE_CELL) &&
+                                (field[index] < MARKED_MINE_CELL)) {
+
+                            /**
+                             * A left click removes a cover from the cell.
+                             */
+                            field[index] -= COVER_FOR_CELL;
+                            rep = true;
+
+                            /**
+                             * In case we left clicked on a mine, the game is over.
+                             * If we left clicked on an empty cell,
+                             * we call the find_empty_cells() method which recursively
+                             * finds all adjacent empty cells.
+                             * */
+                            if (isMineCell(index))
+                                inGame = false;
+                            if (field[index] == EMPTY_CELL)
+                                find_empty_cells(index);
+                        }
                     }
-
-                    if ((field[(cRow * N_COLS) + cCol] > MINE_CELL) &&
-                            (field[(cRow * N_COLS) + cCol] < MARKED_MINE_CELL)) {
-
-                        field[(cRow * N_COLS) + cCol] -= COVER_FOR_CELL;
-                        rep = true;
-
-                        if (field[(cRow * N_COLS) + cCol] == MINE_CELL)
-                            inGame = false;
-                        if (field[(cRow * N_COLS) + cCol] == EMPTY_CELL)
-                            find_empty_cells((cRow * N_COLS) + cCol);
-                    }
-                }
-
                 if (rep)
                     repaint();
 
@@ -271,20 +304,29 @@ public abstract class Board extends JPanel {
         }
     }
 
+    public boolean isMineCell(int index) {
+        int cell = field[index];
+        return cell == MINE_CELL;
+    }
+
     @Override
     public void paintComponent(Graphics g) {
 
+        int idx;
         int cell;
         int uncover = 0;
 
         for (int i = 0; i < N_ROWS; i++) {
             for (int j = 0; j < N_COLS; j++) {
 
-                cell = field[(i * N_COLS) + j];
+                idx = (i * N_COLS) + j;
+                cell = field[idx];
 
-                if (inGame && cell == MINE_CELL)
+                if (inGame && isMineCell(idx))
                     inGame = false;
-
+                /**
+                 * If the game is over and all uncovered mines will be shown if any left and show all wrongly marked cells if any.
+                 */
                 if (!inGame) {
                     if (cell == COVERED_MINE_CELL) {
                         cell = DRAW_MINE;
@@ -304,8 +346,8 @@ public abstract class Board extends JPanel {
                     }
                 }
 
-                g.drawImage(img[cell], (j * CELL_SIZE),
-                        (i * CELL_SIZE), this);
+                /** This code line draws every cell on the board. */
+                drawImage(g, img[cell], i, j);
             }
         }
 
@@ -317,9 +359,4 @@ public abstract class Board extends JPanel {
             statusbar.setText("Game lost");
 
     }
-
-
 }
-
-
-
