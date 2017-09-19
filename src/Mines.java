@@ -48,8 +48,8 @@ public class Mines extends JFrame implements ActionListener{
 
         Board.CELL_SIZE = CELL_SIZE;
 
-        //TODO: solve only one of the three options can be choose.
-        game = new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar);
+        //TODO: only the default option have the bottom mines_left and timer bar.
+        game = new ColorBoard(N_ROWS, N_COLS, statusbar, timeBar);
         getContentPane().add(game);
 
         timer = new Timer(1000, this);
@@ -80,6 +80,15 @@ public class Mines extends JFrame implements ActionListener{
     private void changeGame(Board game) {
         // here will change the game depending on user selection
         getContentPane().removeAll();
+
+        JPanel bottomBar = new JPanel();
+        bottomBar.setLayout(new BoxLayout(bottomBar, BoxLayout.X_AXIS));
+        bottomBar.add(statusbar);
+        bottomBar.add(javax.swing.Box.createHorizontalGlue());
+        bottomBar.add(timeBar);
+        bottomBar.setMaximumSize(new Dimension(FRAME_WIDTH, 6));
+        add(bottomBar, BorderLayout.SOUTH);
+
         getContentPane().add(game);
 
         // update game member variable and start new game
@@ -130,3 +139,6 @@ public class Mines extends JFrame implements ActionListener{
     }
 }
 
+// Difference between squareboard(hgexboard) and the extension(colorboard) is the number of mines
+// of the former is defined, whereas the colorboard is not. Generate cell's color first and then find out
+// and calculate the number of mines.

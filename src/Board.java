@@ -124,7 +124,6 @@ public abstract class Board extends JPanel {
 
 
     protected abstract Image[] loadImages();
-
     public abstract neighbor[] getNeighbors(int index);
 
     public boolean inGame() {
@@ -157,7 +156,7 @@ public abstract class Board extends JPanel {
         /**
          * random generate mines
          * */
-        while (i < N_MINES) {    // 当i< N_MINES: 10的时候  // all_cells: 196
+        while (i < N_MINES) {  // all_cells: 196
             position = (int) (all_cells * random.nextDouble()); /*distributed double value between 0.0 and 1.0*/
 
             if ((position < all_cells) && (field[position] != COVERED_MINE_CELL)) {
