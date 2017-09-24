@@ -1,19 +1,18 @@
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Random;
-
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 public class HexBoard extends Board {
 
-    public HexBoard(int n_mines, int n_rows, int n_cols, JLabel statusbar, JLabel timeBar) {
-        super(statusbar, timeBar);
-        this.N_MINES = n_mines;
-        this.N_ROWS = n_rows;
-        this.N_COLS = n_cols;
+    protected int N_MINES;
+    protected int N_COLS;
+    protected int N_ROWS;
+
+    public HexBoard(int N_MINES, int N_COLS, int N_ROWS, JLabel statusbar, JLabel timeBar) {
+        super(N_COLS, N_ROWS, statusbar, timeBar);
+        this.N_MINES = N_MINES;
     }
 
     @Override

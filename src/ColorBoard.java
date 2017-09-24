@@ -1,27 +1,18 @@
-import java.awt.Graphics;
+
 import java.awt.Image;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 public class ColorBoard extends Board {
-    // lots of constant defined in the Board need to be changed in this game extension; because
-    // squareBoard: all empty cells have same value; however, colorBoard: different colors have different value;
-    // squareBoard: empty mine cells with 1-8 has 8 values;  colorBoard: different color with 1-4 has 8 values;
-    // squareBoard: flag, wrong flag, cover;  colorBoard: flag, wrong flag, cover;
-    // squareBoard: bomb;
 
     protected int N_COLORS; //protected int N_COLORS = 5;
+    protected int NUM_IMAGES;
 
-    public ColorBoard(int n_rows, int n_cols, JLabel statusbar, JLabel timeBar) {
-        super(statusbar, timeBar);
-        this.N_ROWS = n_rows;
-        this.N_COLS = n_cols;
-        all_cells = N_ROWS * N_COLS;
-        NUM_IMAGES = 9;
-        N_COLORS = 9;
+    public ColorBoard(int N_COLORS, int N_COLS, int N_ROWS, JLabel statusbar, JLabel timeBar) {
+        super(N_COLS, N_ROWS, statusbar, timeBar);
+        this.N_COLORS = N_COLORS;
+        all_cells = N_ROWS * N_COLS; //
     }
 
     // TODO: if use image, need to use 4*4 + 3 = 19 images?
@@ -90,10 +81,7 @@ public class ColorBoard extends Board {
     */
 
 
-    // TODO: WHY all the flags are wrong???
-    // HOW TO WIN?
-
-
+    // TODO: HOW TO WIN? WHY all the flags are wrong???
 
 
     // have to override this function that defined in the parent class.

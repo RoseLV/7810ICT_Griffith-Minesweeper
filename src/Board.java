@@ -3,63 +3,23 @@ import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Random;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
-/*
-    // Board.java
-    abstract public class Board {
-        [private|protected|public] int intvar;
-        public void setIntVar(int newIntVar) {
-            intvar = newIntVar;
-        }
-
-        public int getIntVar() {
-            return intvar;
-        }
-
-        public void blah(){
-        }
-
-        public abstract void newGame();
-    }
-
-    // SquareBoard.java
-    public class SquareBoard extends Board {
-
-        public void newGame () {
-            // if private
-            int mycopy = super.intvar; // can't do
-            super.intvar = xx (write)
-        }
-    }
-
-    // Main.java
-    public class Main {
-      public static void main(String[] args){
-        Board board = new Board(); // if class declared abstract, cannot do this
-
-      // if private
-        board.intvar = 14; // not allowed because private, won't compile
-
-        board.setIntVar(14);
-        int myIntVar = board.getIntVar();
-
-      // if protected
-        board.intvar = 14; // not allowed, same reason as private
-
-      // if public
-        board.intvar = 14; // ok
-    }
-    }
-     */
-public abstract class Board extends JPanel {
+public abstract class Board{
 
     public static int CELL_SIZE;
+    public static int getCellSize() {
+        return CELL_SIZE;
+    }
 
-    // define the constants will be used in the game.
+    public static void setCellSize(int cellSize) {
+        CELL_SIZE = cellSize;
+    }
+
+    /** Model: Value, define the constants will be used in the game.*/
+
     /**
      * There are 13 images used in this game.
      * A cell can be surrounded by maximum of 8 mines,
@@ -94,7 +54,26 @@ public abstract class Board extends JPanel {
      */
     protected int N_MINES = 10;
     protected int N_ROWS = 16;
+
+    public int getN_COLS() {
+        return N_COLS;
+    }
+
+    public void setN_COLS(int n_COLS) {
+        N_COLS = n_COLS;
+    }
+
     protected int N_COLS = 16;
+
+    public int getN_ROWS() {
+        return N_ROWS;
+    }
+
+    public void setN_ROWS(int n_ROWS) {
+        N_ROWS = n_ROWS;
+    }
+
+
 
     /**
      * The field is an array of numbers. Each cell in the field has a specific number.
@@ -107,18 +86,23 @@ public abstract class Board extends JPanel {
     protected Image[] img;
 
     protected int all_cells;
-    protected JLabel statusbar;
-    protected JLabel timeBar;
+    protected JLabel statusbar;  // can go
+    protected JLabel timeBar;    // can go
 
 
     // Board constructor
-    public Board(JLabel statusbar, JLabel timeBar) {
+    public Board(int N_COLS, int N_ROWS, JLabel statusbar, JLabel timeBar) {
+
+        this.N_COLS = N_COLS;
+        this.N_ROWS = N_ROWS;
         this.statusbar = statusbar;
         this.timeBar = timeBar;
         this.img = this.loadImages();
 
+        // listener should go to controller, need Jpanel
         setDoubleBuffered(true);
         addMouseListener(new MinesAdapter());
+
         newGame();
     }
 
@@ -126,42 +110,40 @@ public abstract class Board extends JPanel {
     protected abstract Image[] loadImages();
     public abstract neighbor[] getNeighbors(int index);
 
+    // state: boolean inGame
     public boolean inGame() {
         return inGame;
     }
 
+    // start a new game
     public void newGame() {
-
-        timeBar.setText("0");
 
         int i;
         int position;
         int cell;
-        Random random = new Random();
         inGame = true;
+        timeBar.setText("0"); // Display time.
         mines_left = N_MINES;
-        /**
-         * These lines set up the mine field. Every cell is covered by default.
-         */
+        Random random = new Random();
+
+        // These lines set up the mine field. Every cell is covered by default.
         all_cells = N_ROWS * N_COLS; // 16 * 16
         field = new int[all_cells];
 
         for (i = 0; i < all_cells; i++)
             field[i] = COVER_FOR_CELL; // field[i] all == 10 initially
+
         /** Set the number of line left ob the bottom status bar.*/
         statusbar.setText(Integer.toString(mines_left));
 
-        /** In the while cycle we randomly position all mines in the field. */
-        i = 0;
-        /**
-         * random generate mines
-         * */
-        while (i < N_MINES) {  // all_cells: 196
+        int mine = 0;
+        /** random generate N_MINES mines. */
+        while (mine < N_MINES) {  // all_cells: 196
             position = (int) (all_cells * random.nextDouble()); /*distributed double value between 0.0 and 1.0*/
 
             if ((position < all_cells) && (field[position] != COVERED_MINE_CELL)) {
                 field[position] = COVERED_MINE_CELL;
-                i++;
+                mine++;
 
                 neighbor[] neighbors = getNeighbors(position);
                 for (neighbor n : neighbors) {
@@ -177,6 +159,7 @@ public abstract class Board extends JPanel {
         }
     }
 
+    // recursive??!
     public void find_empty_cells(int position) {
         neighbor[] neighbors = getNeighbors(position);
         for (neighbor n : neighbors) {
@@ -196,35 +179,8 @@ public abstract class Board extends JPanel {
         }
     }
 
-    /**
-     * This method allows for subclasses to override the
-     * cell index calculated for a mouse click should
-     * their painting not conform to a perfect grid.
-     */
-    public int getIndexFromMouseEvent(MouseEvent e) {
-        int cCol = e.getX() / CELL_SIZE;
-        int cRow = e.getY() / CELL_SIZE;
-        return cRow * N_COLS + cCol;
-    }
 
-    /**
-     * This method allows for subclasses to adjust which clicks
-     * are registered as landing on the game board
-     */
-    public boolean clickedOnBoard(MouseEvent e) {
-        return (e.getX() < N_COLS * CELL_SIZE) && (e.getY() < N_ROWS * CELL_SIZE);
-    }
-
-    /**
-     * This method allows subclasses to override the position of
-     * a particular image icon being drawn
-     * (i.e. to decide the x,y coordinate)
-     */
-    public void drawImage(Graphics g, Image img, int i, int j) {
-        g.drawImage(img, (j * CELL_SIZE), (i * CELL_SIZE), this);
-    }
-
-
+    // TODO: write getter setter in gameModel so get the data here;
     class MinesAdapter extends MouseAdapter {
 
         @Override
