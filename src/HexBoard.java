@@ -10,8 +10,8 @@ public class HexBoard extends Board {
     protected int N_COLS;
     protected int N_ROWS;
 
-    public HexBoard(int N_MINES, int N_COLS, int N_ROWS, JLabel statusbar, JLabel timeBar) {
-        super(N_COLS, N_ROWS, statusbar, timeBar);
+    public HexBoard(int N_MINES, int N_COLS, int N_ROWS) {
+        super(N_COLS, N_ROWS);
         this.N_MINES = N_MINES;
     }
 
@@ -75,6 +75,9 @@ public class HexBoard extends Board {
         return neighbors;
     }
 
+/*
+Not override Board anymore, instead these 2 are in the Game controller
+
     @Override
     public void drawImage(Graphics g, Image img, int i, int j) {
         int extraX = i % 2 == 0 ? 6 : 0;
@@ -94,4 +97,5 @@ public class HexBoard extends Board {
         int cCol = x / CELL_SIZE;
         return cRow * N_COLS + cCol;
     }
+    */
 }

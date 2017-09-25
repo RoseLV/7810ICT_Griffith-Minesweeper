@@ -10,9 +10,9 @@ public class SquareBoard extends Board {
     protected int N_ROWS;
 
     // constructor
-    public SquareBoard(int N_MINES, int N_COLS, int N_ROWS, JLabel statusbar, JLabel timeBar) {
-        super(N_COLS, N_ROWS, statusbar, timeBar);
-        all_cells = N_ROWS * N_COLS;
+    public SquareBoard(int N_MINES, int N_COLS, int N_ROWS) {
+        super(N_COLS, N_ROWS);
+        setAll_cells(N_ROWS * N_COLS);
         this.N_MINES = N_MINES;
         newGame();
     }

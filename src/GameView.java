@@ -2,35 +2,70 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.Timer;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.Graphics;
 
 
 public class GameView extends JFrame {
+    // Use private better : least privilege
+    private final int DRAW_MINE = 9;
+    private final int DRAW_COVER = 10;
+    private final int DRAW_MARK = 11;
+    private final int DRAW_WRONG_MARK = 12;
     private final int CELL_SIZE = 13;
     private int FRAME_WIDTH, FRAME_HEIGHT;
-
     private final JPanel statusBar;
     private JLabel statusText, timeText;
+    private static final int BORDER_WIDTH = 3;
+    private static final int MENU_BAR_HEIGHT = 60;
+    private static final int STATUS_BAR_HEIGHT = 6;
 
     private final JMenuBar menuBar;
-    private JMenuItem squareCell, hexCell, colorCell;
 
-    private GameModel gameModel;
+    public JMenuItem getSquareCell() {
+        return squareCell;
+    }
+
+    public void setSquareCell(JMenuItem squareCell) {
+        this.squareCell = squareCell;
+    }
+
+    public JMenuItem getHexCell() {
+        return hexCell;
+    }
+
+    public void setHexCell(JMenuItem hexCell) {
+        this.hexCell = hexCell;
+    }
+
+    public JMenuItem getColorCell() {
+        return colorCell;
+    }
+
+    public void setColorCell(JMenuItem colorCell) {
+        this.colorCell = colorCell;
+    }
+
+    private JMenuItem squareCell, hexCell, colorCell;
+    private Board gameModel;
+
 
     // constructor
-    public GameView(GameModel gameModel) throws HeadlessException {
+    public GameView(Board gameModel) throws HeadlessException {
         super("Minesweeper");
         this.gameModel = gameModel;
 
         // set window size
-        this.FRAME_HEIGHT = this.gameModel.getRows() * CELL_SIZE + 66;
-        this.FRAME_WIDTH = this.gameModel.getCols() * CELL_SIZE + 6;
+        this.FRAME_HEIGHT = this.gameModel.getN_ROWS() * CELL_SIZE + MENU_BAR_HEIGHT;
+        this.FRAME_WIDTH = this.gameModel.getN_COLS() * CELL_SIZE + BORDER_WIDTH;
         setSize(this.FRAME_WIDTH, this.FRAME_HEIGHT);
         setLocationRelativeTo(null);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         setJMenuBar(this.menuBar = this.createMenuBar());
-        add(this.gameModel.getGameBoard());// paintComponent
+        //this.paintComponent();// paintComponent
         add(this.statusBar = this.createStatusBar(), BorderLayout.SOUTH);
     }
 
@@ -40,7 +75,7 @@ public class GameView extends JFrame {
         bottomBar.add(this.statusText = new JLabel());
         bottomBar.add(javax.swing.Box.createHorizontalGlue());
         bottomBar.add(this.timeText = new JLabel());
-        bottomBar.setMaximumSize(new Dimension(FRAME_WIDTH, 6));
+        bottomBar.setMaximumSize(new Dimension(FRAME_WIDTH, STATUS_BAR_HEIGHT));
         return bottomBar;
     }
 
@@ -54,46 +89,69 @@ public class GameView extends JFrame {
         return menuBar;
     }
 
-
-    public void updateGame(Board game) {
+// update View
+    public void updateGame(Board gameModel) {
         // here will change the game depending on user selection
         removeAll();
-        add(game);
-        add(statusBar, BorderLayout.SOUTH);
-
+        add(menuBar);
+        add(statusBar);
+        //add(gameModel);
+        add(statusText, BorderLayout.SOUTH);
+        add(timer);
         // this revalidate ensures display is updated correctly
         revalidate();
     }
 
-    public void actionPerformed(ActionEvent e) {
 
-        if (e.getSource() == timer) {
-            String time = timeBar.getText().trim();
-            int t = Integer.parseInt(time);
-            //System.out.println(t);
-            if (!game.inGame()) {
-                timer.stop();
-            } else {
-                t++;
-                timeBar.setText(t + "");
+    @Override
+    public void paintComponent(Graphics g) {
+
+        int idx;
+        int cell;
+        int uncover = 0;
+
+        for (int i = 0; i < gameModel.getN_ROWS(); i++) {
+            for (int j = 0; j < gameModel.getN_COLS(); j++) {
+
+                idx = (i * gameModel.getN_COLS()) + j;
+                cell = gameModel.getField()[idx];
+
+                if (gameModel.getInGame() && gameModel.isMineCell(idx))
+                    gameModel.setInGame(false);
+                /**
+                 * If the game is over and all uncovered mines will be shown if any left and show all wrongly marked cells if any.
+                 */
+                if (!gameModel.getInGame()) {
+                    if (cell == gameModel.getCOVERED_MINE_CELL()) {
+                        cell = DRAW_MINE;
+                    } else if (cell == gameModel.getMARKED_MINE_CELL()) {
+                        cell = DRAW_MARK;
+                    } else if (cell > gameModel.getCOVERED_MINE_CELL()) {
+                        cell = DRAW_WRONG_MARK;
+                    } else if (cell > gameModel.getMINE_CELL()) {
+                        cell = DRAW_COVER;
+                    }
+                } else {
+                    if (cell > gameModel.getCOVERED_MINE_CELL())
+                        cell = DRAW_MARK;
+                    else if (cell > gameModel.getMINE_CELL()) {
+                        cell = DRAW_COVER;
+                        uncover++;
+                    }
+                }
+
+                /** This code line draws every cell on the board. */
+                drawImage(g, gameModel.getImg()[cell], i, j);
             }
         }
 
-        if (e.getSource() == squareCell) {
-            this.changeGame(new SquareBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar));
+        if (uncover == 0 && gameModel.getInGame()) {
+            gameModel.setInGame(false);
+            statusText.setText("Game won");
         }
-
-        if (e.getSource() == hexCell) {
-            this.changeGame(new HexBoard(N_MINES, N_ROWS, N_COLS, statusbar, timeBar));
-        }
-
-        if (e.getSource() == colorCell) {
-            this.changeGame(new ColorBoard(N_COLORS, N_ROWS, N_COLS, statusbar, timeBar));
-        }
+        else if (!gameModel.getInGame())
+            statusText.setText("Game lost");
 
     }
-}
 
-// Difference between squareboard(hgexboard) and the extension(colorboard) is the number of mines
-// of the former is defined, whereas the colorboard is not. Generate cell's color first and then find out
-// and calculate the number of mines.
+}

@@ -7,9 +7,11 @@ public class GameMVC {
 
             @Override
             public void run() {
-                GameModel model = new GameModel();
-                GameView view = new GameView(model);
-                GameController controller = new GameController(model, view);
+                // abstract class cannot be instantiated
+                // instead, how to use three subclass which can be instantiated?
+                Board gameModel = new SquareBoard();
+                GameView view = new GameView(gameModel);
+                GameController controller = new GameController(gameModel, view);
                 controller.startGame();
             }
         });

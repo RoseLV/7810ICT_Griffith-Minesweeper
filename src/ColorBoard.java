@@ -9,8 +9,8 @@ public class ColorBoard extends Board {
     protected int N_COLORS; //protected int N_COLORS = 5;
     protected int NUM_IMAGES;
 
-    public ColorBoard(int N_COLORS, int N_COLS, int N_ROWS, JLabel statusbar, JLabel timeBar) {
-        super(N_COLS, N_ROWS, statusbar, timeBar);
+    public ColorBoard(int N_COLORS, int N_COLS, int N_ROWS) {
+        super(N_COLS, N_ROWS);
         this.N_COLORS = N_COLORS;
         all_cells = N_ROWS * N_COLS; //
     }
@@ -49,8 +49,8 @@ public class ColorBoard extends Board {
         }
         mines_left = find_number_of_neighbor_mines();
         inGame = true;
-        statusbar.setText(Integer.toString(mines_left));
-        timeBar.setText("0");
+        //statusbar.setText(Integer.toString(mines_left));
+        //timeBar.setText("0");
     }
 
 

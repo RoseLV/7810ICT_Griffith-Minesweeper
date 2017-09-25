@@ -1,4 +1,4 @@
-
+/* Can be removed
 public class GameModel {
     private Board gameBoard;
 
@@ -14,6 +14,6 @@ public class GameModel {
     public void setGameBoard(Board gameBoard) {
         this.gameBoard = gameBoard;
     }
-}
+} */
 
 
