@@ -1,17 +1,11 @@
 import org.junit.Test;
 
-import javax.swing.*;
-import java.awt.*;
-
 import static org.junit.Assert.*;
 
 /**
- * Created by ranlyu on 2/9/17.
+ * Created by ranlyu on 25/9/17.
  */
 public class BoardTest {
-
-    //private static Board board = new Board(JLabel statusbar, JLabel timeBar);
-
     @Test
     public void loadImages() throws Exception {
     }
@@ -21,7 +15,67 @@ public class BoardTest {
     }
 
     @Test
+    public void isClickOnBoard() throws Exception {
+    }
+
+    @Test
+    public void getIndexAt() throws Exception {
+    }
+
+    @Test
+    public void getCellAt() throws Exception {
+    }
+
+    @Test
+    public void processClickAt() throws Exception {
+    }
+
+    @Test
+    public void isFlagCell() throws Exception {
+    }
+
+    @Test
+    public void isMineCell() throws Exception {
+    }
+
+    @Test
+    public void isCoveredCell() throws Exception {
+    }
+
+    @Test
+    public void isCoveredMineCell() throws Exception {
+    }
+
+    @Test
+    public void flagCell() throws Exception {
+    }
+
+    @Test
+    public void unflagCell() throws Exception {
+    }
+
+    @Test
+    public void uncoverCell() throws Exception {
+    }
+
+    @Test
     public void newGame() throws Exception {
+    }
+
+    @Test
+    public void loseGame() throws Exception {
+    }
+
+    @Test
+    public void winGame() throws Exception {
+    }
+
+    @Test
+    public void updateGameStatus() throws Exception {
+    }
+
+    @Test
+    public void getStatusText() throws Exception {
     }
 
     @Test
@@ -29,11 +83,11 @@ public class BoardTest {
     }
 
     @Test
-    public void find_empty_cells() throws Exception {
+    public void isGameWon() throws Exception {
     }
 
     @Test
-    public void paintComponent() throws Exception {
+    public void find_empty_cells() throws Exception {
     }
 
 }
